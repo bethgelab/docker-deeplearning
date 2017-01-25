@@ -68,7 +68,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install pip --upgrade && \
-    pip3 install pip --upgrade
+    pip3 install pip --upgrade && \
+    pip install setuptools && \
+    pip3 install setuptools
 
 RUN mkdir /usr/.jupyter
 ENV JUPYTER_CONFIG_DIR /usr/.jupyter
