@@ -14,6 +14,19 @@ ENV NB_USER wbrendel
 ENV NB_UID 5321
 ENV HOME /gpfs01/bethge/home/$NB_USER
 
+# Install SSH, sudo and gfortran, etc.
+RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+		gfortran \
+		openssh-server \
+		pwgen \
+		screen \
+		sudo \
+		tmux \
+		vim \
+		wget \
+		xterm \
+		&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Create jovyan user with UID=1000 and in the 'users' group
 RUN groupadd -g 1019 bethgelab && \
 	groupadd -g 1011 cin && \
@@ -27,18 +40,6 @@ RUN sed -i.bkp -e \
       's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
 	  /etc/sudoers
 
-# Install SSH, sudo and gfortran, etc.
-RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
-		gfortran \
-		openssh-server \
-		pwgen \
-		screen \
-		sudo \
-		tmux \
-		vim \
-		wget \
-		xterm \
-		&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Use https:// instead of git:// to access github (e.g. for jupyter install)
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
