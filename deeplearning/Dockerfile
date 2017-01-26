@@ -99,9 +99,6 @@ RUN pip3 --no-cache-dir install \
 		&& \
     python3 -m ipykernel.kernelspec
 
-
-
-
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
