@@ -8,11 +8,7 @@ USER root
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Set USER & ID
 ENV SHELL /bin/bash
-ENV NB_USER wbrendel
-ENV NB_UID 5321
-ENV HOME /gpfs01/bethge/home/$NB_USER
 
 # Install SSH, sudo and gfortran, etc.
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
@@ -27,19 +23,35 @@ RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --n
 		xterm \
 		&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Create jovyan user with UID=1000 and in the 'users' group
-RUN groupadd -g 1019 bethgelab && \
-	groupadd -g 1011 cin && \
-	useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
-	usermod -g bethgelab $NB_USER && \
-	usermod -a -G cin $NB_USER && \
-	usermod -a -G sudo $NB_USER
-
 # Enable passwordless sudo for users under the "sudo" group
 RUN sed -i.bkp -e \
       's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
 	  /etc/sudoers
 
+# Setup gosu (https://github.com/tianon/gosu)
+# gosu is an improved version of su which behaves better inside docker
+# we use it to dynamically switch to the desired user in the entrypoint
+# (see below)
+ENV GOSU_VERSION 1.9
+# Use unsecure HTTP via Port 80 to fetch key due to firewall in CIN.
+RUN set -x \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/* \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver "hkp://ha.pool.sks-keyservers.net:80" --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apt-get purge -y --auto-remove ca-certificates
+
+
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod a+x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Use https:// instead of git:// to access github (e.g. for jupyter install)
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
@@ -87,13 +99,16 @@ RUN pip3 --no-cache-dir install \
 		&& \
     python3 -m ipykernel.kernelspec
 
+
+
+
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
-COPY run_jupyter.sh /
-RUN chmod +x /run_jupyter.sh && \
+COPY run_jupyter.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/run_jupyter.sh && \
     chmod -R a+rwx /usr/.jupyter
 
 USER $NB_USER
 
-CMD ["/run_jupyter.sh"]
+CMD ["/usr/local/bin/run_jupyter.sh"]
