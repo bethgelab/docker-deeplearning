@@ -32,7 +32,7 @@ RUN sed -i.bkp -e \
 # gosu is an improved version of su which behaves better inside docker
 # we use it to dynamically switch to the desired user in the entrypoint
 # (see below)
-ENV GOSU_VERSION 1.9
+ENV GOSU_VERSION 1.10
 # Use unsecure HTTP via Port 80 to fetch key due to firewall in CIN.
 RUN set -x \
     && apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/* \
