@@ -10,9 +10,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENV SHELL /bin/bash
 
-# Enable passwordless sudo for all users
-RUN echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
-
 # Install SSH, sudo and gfortran, etc.
 RUN apt-get update -qq \
  && DEBIAN_FRONTEND=noninteractive apt-get install -yq -qq --no-install-recommends \
@@ -44,6 +41,9 @@ RUN apt-get update -qq \
     zlib1g-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Enable passwordless sudo for all users
+RUN echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Setup gosu (https://github.com/tianon/gosu)
 # gosu is an improved version of su which behaves better inside docker
