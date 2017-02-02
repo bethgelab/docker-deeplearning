@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# start ssh
+service ssh restart
+
 # Create user account
 if [ -n "$USER" ]; then
    if [ -z "$USER_HOME" ]; then
