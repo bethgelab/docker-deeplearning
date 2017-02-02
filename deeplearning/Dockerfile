@@ -62,7 +62,9 @@ RUN chmod a+x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-RUN pip2 install pip --upgrade \
+# We have to use `pip` (instead of `pip2`) to upgrade pip, since these two are
+# different and only `pip` works. After the upgrade, we can start using `pip2`.
+RUN pip install pip --upgrade \
  && pip3 install pip --upgrade \
  && pip2 install setuptools \
  && pip3 install setuptools
