@@ -14,15 +14,15 @@ ENV SHELL /bin/bash
 RUN apt-get update -qq \
  && DEBIAN_FRONTEND=noninteractive apt-get install -yq -qq --no-install-recommends \
     ca-certificates \
-	gfortran \
-	openssh-server \
-	pwgen \
-	screen \
-	sudo \
-	tmux \
-	vim \
-	wget \
-	xterm \
+    gfortran \
+    openssh-server \
+    pwgen \
+    screen \
+    sudo \
+    tmux \
+    vim \
+    wget \
+    xterm \
     git \
     build-essential \
     curl \
@@ -93,3 +93,4 @@ RUN chmod +x /usr/local/bin/run_jupyter.sh \
 USER $NB_USER
 
 CMD ["/usr/local/bin/run_jupyter.sh"]
+
