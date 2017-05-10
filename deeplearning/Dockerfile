@@ -39,8 +39,12 @@ RUN apt-get update -qq \
     python-pip \
     python3-pip \
     zlib1g-dev \
+	libgoogle-perftools-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# fix invalid pointer bug in Tensorboard
+ENV LD_PRELOAD /usr/lib/libtcmalloc_minimal.so.4
 
 # Enable passwordless sudo for all users
 RUN echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -74,13 +78,18 @@ ENV JUPYTER_CONFIG_DIR /usr/.jupyter
 COPY jupyter_notebook_config.py /usr/.jupyter/
 
 RUN pip3 --no-cache-dir install \
+    tqdm \
     ipykernel \
     jupyter \
     matplotlib \
     numpy \
     scipy \
+    theano \
+    https://github.com/Lasagne/Lasagne/archive/master.zip \
     sklearn \
     tensorflow-gpu \
+    http://download.pytorch.org/whl/cu80/torch-0.1.12.post2-cp35-cp35m-linux_x86_64.whl \
+    torchvision \
  && python3 -m ipykernel.kernelspec
 
 # Jupyter has issues with being run directly:
@@ -93,4 +102,3 @@ RUN chmod +x /usr/local/bin/run_jupyter.sh \
 USER $NB_USER
 
 CMD ["/usr/local/bin/run_jupyter.sh"]
-

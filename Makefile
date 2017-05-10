@@ -1,6 +1,10 @@
 build-test:
 	docker build -t bethgelab/deeplearning-test deeplearning
 
+build-push:
+	docker build -t bethgelab/deeplearning:cuda8.0-cudnn5 deeplearning
+	docker push bethgelab/deeplearning:cuda8.0-cudnn5
+
 test: build-test
 	pytest tests
 	#docker run -it bethgelab/deeplearning-test echo "hello as root"
