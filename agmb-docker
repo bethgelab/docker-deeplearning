@@ -3,6 +3,7 @@ import os
 import socket
 import argparse
 import random
+import string
 from subprocess import call
 import crypt
 import fcntl
@@ -31,6 +32,26 @@ def get_open_port():
     port = s.getsockname()[1]
     s.close()
     return port
+
+# get correct password encoding for jupyter notebook
+# without relying on Ipython.lib.passwd (which is often not available on nodes)
+def cast_bytes(s, encoding=None):
+    if not isinstance(s, bytes):
+        return encode(s, encoding)
+    return s
+
+def str_to_bytes(u, encoding=None):
+    encoding = encoding or DEFAULT_ENCODING
+    return u.encode(encoding, "replace")
+
+def jupyter_crypt(passphrase=None, algorithm='sha1'):
+    import hashlib
+    salt_len = 12
+    h = hashlib.new(algorithm)
+    salt = ('%0' + str(salt_len) + 'x') % random.getrandbits(4 * salt_len)
+    h.update(cast_bytes(passphrase, 'utf-8') + str_to_bytes(salt, 'ascii'))
+			 
+    return ':'.join((algorithm, salt, h.hexdigest()))
 
 # parse custom arguments
 parser = argparse.ArgumentParser()
@@ -63,6 +84,11 @@ parser.add_argument('--jupyterport', metavar='JUPYTER_PORT', type=int,
                     default=random.randint(600,800),
 					help='Specify a jupyter port (default: randomly chosen in port range [600, 800])')
 
+parser.add_argument('--jupyterpass', metavar='JUPYTER_PASSWORD', type=str,
+                    default=''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(30)),
+					help='Specify a jupyter password (default: randomly created)')
+
+# set container-name
 gpu_name = 'gpu' + GPU.translate(None, ',') if GPU is not None else 'noGPU'
 parser.add_argument('--name', metavar='CONTAINER_NAME', type=str,
                     default=gpu_name + '-' + os.environ['USER'],
@@ -70,8 +96,9 @@ parser.add_argument('--name', metavar='CONTAINER_NAME', type=str,
 
 (args, extras) = parser.parse_known_args()
 
-# encrypt password
+# encrypt passwords
 args.pw = crypt.crypt(args.pw, 'aa')
+args.jupyterpass = jupyter_crypt(args.jupyterpass)
 
 # put together the nvidia-docker command
 command = ['nvidia-docker',                            # the environmental variable NV_GPU is set and does not need to be called here 
@@ -84,6 +111,7 @@ command = ['nvidia-docker',                            # the environmental varia
 		   '-e', 'USER_HOME=' + args.userhome,         # set home directory
 		   '-e', 'USER_ENCRYPTED_PASSWORD=' + args.pw, # set home directory
 		   '-e', 'GPU=' + GPU,                         # set GPU
+		   '-e', 'JUPYTERPASS=' + args.jupyterpass,    # set jupyter password
 		   '-v', '/gpfs01/bethge:/gpfs01/bethge',      # mount bethge directory
 		   '--name', args.name                         # set container name
 		   ] + extras[1:]
@@ -95,7 +123,8 @@ except:
     ip = 'unknown'
 
 # print directions
-print("Setting Notebook port binding to: %i (to set manually add --jupyterport %i as flag)" % (args.jupyterport, args.jupyterport))
+print("Setting Notebook port binding to: {0} (to set manually add --jupyterport {0} as flag)".format(args.jupyterport))
+print("Setting Notebook password to: {0} (to set manually add --jupyterpass {0} as flag)".format(args.jupyterpass))
 print("")
 print("You can now open the notebook on the host machine by directing your browser to")
 print("")
