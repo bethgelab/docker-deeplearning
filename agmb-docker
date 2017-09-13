@@ -74,10 +74,15 @@ parser.add_argument('--name', metavar='CONTAINER_NAME', type=str,
 args.pw = crypt.crypt(args.pw, 'aa')
 
 # put together the nvidia-docker command
-command = ['nvidia-docker',                            # the environmental variable NV_GPU is set and does not need to be called here 
-           extras[0],                                  # docker command
-           '-p', str(args.sshport) + ':22',            # set SSH port
-           '-p', str(args.jupyterport) + ':8888',      # set JUPYTER port
+command = ['nvidia-docker',                            # the environmental variable NV_GPU is set and does not need to be called here
+           extras[0]]                                  # docker command
+
+if args.sshport:
+    command.extend(['-p', str(args.sshport) + ':22'])  # set SSH port
+if args.jupyterport:
+    command.extend(['-p', str(args.jupyterport) + ':8888'])  # set JUPYTER port
+
+command += [
 		   '-e', 'USER_GROUPS=' + args.usergroups,     # set user-group
 		   '-e', 'USER=' + args.user,                  # set user-name
 		   '-e', 'USER_ID=' + str(args.uid),           # set user-ID
@@ -88,23 +93,25 @@ command = ['nvidia-docker',                            # the environmental varia
 		   '--name', args.name                         # set container name
 		   ] + extras[1:]
 
-# get IP address
-try:
-    ip = get_ip_address('eno1')
-except:
-    ip = 'unknown'
 
-# print directions
-print("Setting Notebook port binding to: %i (to set manually add --jupyterport %i as flag)" % (args.jupyterport, args.jupyterport))
-print("")
-print("You can now open the notebook on the host machine by directing your browser to")
-print("")
-print("    http://localhost:%i" % args.jupyterport)
-print("")
-print("or, from a remote system, to")
-print("")
-print("    http://%s:%i" % (ip, args.jupyterport))
-print("")
-print("In the latter case make sure that your local machine can see the server! Otherwise you might have to configure an SSH tunnel first.")
+if args.sshport or args.jupyterport:
+    # get IP address
+    try:
+        ip = get_ip_address('eno1')
+    except:
+        ip = 'unknown'
+
+    # print directions
+    print("Setting Notebook port binding to: %i (to set manually add --jupyterport %i as flag)" % (args.jupyterport, args.jupyterport))
+    print("")
+    print("You can now open the notebook on the host machine by directing your browser to")
+    print("")
+    print("    http://localhost:%i" % args.jupyterport)
+    print("")
+    print("or, from a remote system, to")
+    print("")
+    print("    http://%s:%i" % (ip, args.jupyterport))
+    print("")
+    print("In the latter case make sure that your local machine can see the server! Otherwise you might have to configure an SSH tunnel first.")
 
 call(command)
