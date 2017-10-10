@@ -24,6 +24,7 @@ RUN apt-get update -qq \
     wget \
     xterm \
     git \
+    zsh \
     build-essential \
     curl \
     libcurl3-dev \
@@ -39,6 +40,7 @@ RUN apt-get update -qq \
     python-pip \
     python3-pip \
     zlib1g-dev \
+    libjs-mathjax \ 
 	libgoogle-perftools-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
