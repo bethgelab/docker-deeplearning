@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn5-devel
+FROM nvidia/cuda:8.0-cudnn6-devel
 
 MAINTAINER bethgelab (it@bethgelab.org)
 
@@ -24,6 +24,7 @@ RUN apt-get update -qq \
     wget \
     xterm \
     git \
+    zsh \
     build-essential \
     curl \
     libcurl3-dev \
@@ -39,6 +40,7 @@ RUN apt-get update -qq \
     python-pip \
     python3-pip \
     zlib1g-dev \
+    libjs-mathjax \ 
 	libgoogle-perftools-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -87,7 +89,7 @@ RUN pip3 --no-cache-dir install \
     theano \
     https://github.com/Lasagne/Lasagne/archive/master.zip \
     sklearn \
-    tensorflow-gpu==1.2.1 \
+    tensorflow-gpu \
     http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp35-cp35m-manylinux1_x86_64.whl \
     torchvision \
  && python3 -m ipykernel.kernelspec
