@@ -2,8 +2,8 @@ build-test:
 	docker build -t bethgelab/deeplearning-test deeplearning
 
 build-push:
-	docker build -t bethgelab/deeplearning:cuda8.0-cudnn5 deeplearning
-	docker push bethgelab/deeplearning:cuda8.0-cudnn5
+	docker build -t bethgelab/deeplearning:cuda8.0-cudnn6 deeplearning
+	docker push bethgelab/deeplearning:cuda8.0-cudnn6
 
 test: build-test
 	pytest tests
