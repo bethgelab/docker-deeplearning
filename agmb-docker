@@ -15,6 +15,8 @@ try:
     GPU = os.environ['GPU']
 except KeyError:
     GPU = ''
+if GPU == '':
+    GPU = 'cpu'
 
 # find IP address of network interface
 def get_ip_address(ifname):
@@ -88,13 +90,18 @@ parser.add_argument('--jupyterpass', metavar='JUPYTER_PASSWORD', type=str,
                     default=''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(30)),
 					help='Specify a jupyter password (default: randomly created)')
 
-# set container-name
-gpu_name = 'gpu' + GPU.translate(None, ',') if GPU is not None else 'noGPU'
 parser.add_argument('--name', metavar='CONTAINER_NAME', type=str,
-                    default=gpu_name + '-' + os.environ['USER'],
-					help='Name of container (default: gpu$GPU_$USER')
+                    default="",
+		    help='Name of container (default: $USER-[CPU/$GPU])')
 
 (args, extras) = parser.parse_known_args()
+
+
+# container name
+gpu_name = GPU.translate(None, ',') if GPU != "cpu" else 'CPU'
+container_name = os.environ['USER'] + gpu_name
+if args.name != "":
+    container_name = container_name + "-" + args.name
 
 # encrypt passwords
 args.pw = crypt.crypt(args.pw, 'aa')
@@ -112,14 +119,14 @@ if args.jupyterport:
 command += [
 		   '-e', 'USER_GROUPS=' + args.usergroups,     # set user-group
 		   '-e', 'USER=' + args.user,                  # set user-name
-	           '-e', 'OWNER=' + args.user,                 # set owner-name (used by dockerps)
+		   '-e', 'OWNER=' + args.user,                 # set owner-name (used by dockerps)
 		   '-e', 'USER_ID=' + str(args.uid),           # set user-ID
 		   '-e', 'USER_HOME=' + args.userhome,         # set home directory
 		   '-e', 'USER_ENCRYPTED_PASSWORD=' + args.pw, # set home directory
 		   '-e', 'GPU=' + GPU,                         # set GPU
 		   '-e', 'JUPYTERPASS=' + args.jupyterpass,    # set jupyter password
 		   '-v', '/gpfs01/bethge:/gpfs01/bethge',      # mount bethge directory
-		   '--name', args.name                         # set container name
+		   '--name', container_name                    # set container name
 		   ] + extras[1:]
 
 # get IP address
