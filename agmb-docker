@@ -4,7 +4,7 @@ import socket
 import argparse
 import random
 import string
-from subprocess import call
+from subprocess import call, check_output
 import crypt
 import fcntl
 import struct
@@ -34,6 +34,35 @@ def get_open_port():
     port = s.getsockname()[1]
     s.close()
     return port
+
+
+# find other containers using the same GPU
+def check_other_containers(gpu):
+    if (gpu == "") or (gpu == "cpu"):
+        return()
+    
+    # get container ids and container names
+    a = check_output(['docker', 'ps']).split('\n')
+    containerIds = []
+    containerNames = []
+    for l in a[1:]:
+        containerId = l.strip().split(" ")[0]
+        if containerId.strip() != "":
+            containerIds.append(containerId)
+        containerName = l.strip().split(" ")[-1]
+        if containerName.strip() != "":
+            containerNames.append(containerName)
+
+    # check if any container uses the specified GPU
+    for containerId, containerName in zip(containerIds, containerNames):
+        if "bethgelab/gpu_minion" in containerName:  # ignore minions
+            continue
+
+        usedGpu = check_output(['docker', 'exec', containerId, 'sh', '-c', "echo $GPU"]).strip()
+        if usedGpu == gpu:
+            print(">>> WARNING the following container use the requested GPU:")
+            print("CONTAINER ID: {}, CONTAINER NAME: {}".format(containerId, containerName))
+
 
 # get correct password encoding for jupyter notebook
 # without relying on Ipython.lib.passwd (which is often not available on nodes)
@@ -148,5 +177,7 @@ print("")
 print("    http://%s:%i" % (ip, args.jupyterport))
 print("")
 print("In the latter case make sure that your local machine can see the server! Otherwise you might have to configure an SSH tunnel first.")
+print("")
 
+check_other_containers(GPU)
 call(command)
