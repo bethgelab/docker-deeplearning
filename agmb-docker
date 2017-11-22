@@ -112,6 +112,7 @@ if args.jupyterport:
 command += [
 		   '-e', 'USER_GROUPS=' + args.usergroups,     # set user-group
 		   '-e', 'USER=' + args.user,                  # set user-name
+	           '-e', 'OWNER=' + args.user,                 # set owner-name (used by dockerps)
 		   '-e', 'USER_ID=' + str(args.uid),           # set user-ID
 		   '-e', 'USER_HOME=' + args.userhome,         # set home directory
 		   '-e', 'USER_ENCRYPTED_PASSWORD=' + args.pw, # set home directory
