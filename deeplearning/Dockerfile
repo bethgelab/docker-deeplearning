@@ -94,6 +94,14 @@ RUN pip3 --no-cache-dir install \
     torchvision \
  && python3 -m ipykernel.kernelspec
 
+# enable jupyter extensions
+RUN pip install jupyter_contrib_nbextensions \
+ && jupyter contrib nbextension install --system \
+ && jupyter nbextension enable codefolding/main \
+ && jupyter nbextension enable hinterland/hinterland \
+ && jupyter nbextension enable varInspector/main \
+ && jupyter nbextension enable comment-uncomment/main
+
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
