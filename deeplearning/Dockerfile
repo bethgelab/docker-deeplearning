@@ -83,6 +83,7 @@ RUN pip3 --no-cache-dir install \
     tqdm \
     ipykernel \
     jupyter \
+    jupyterlab \
     matplotlib \
     numpy \
     scipy \
@@ -106,8 +107,10 @@ RUN pip install jupyter_contrib_nbextensions \
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
 COPY run_jupyter.sh /usr/local/bin
+COPY run_jupyterlab.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/run_jupyter.sh \
- && chmod -R a+rwx /usr/.jupyter
+ && chmod -R a+rwx /usr/.jupyter \
+ && chmod +x /usr/local/bin/run_jupyterlab.sh
 
 USER $NB_USER
 
