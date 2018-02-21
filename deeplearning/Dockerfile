@@ -41,9 +41,19 @@ RUN apt-get update -qq \
     python3-pip \
     zlib1g-dev \
     libjs-mathjax \ 
-	libgoogle-perftools-dev \
+    libgoogle-perftools-dev \
+    software-properties-common \
+    python-software-properties \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN add-apt-repository -y ppa:jonathonf/python-3.6 \
+ && apt-get update \
+ && apt-get install -y python3.6 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN rm /usr/bin/python3 && ln -s /usr/bin/python3.6 /usr/bin/python3
 
 # fix invalid pointer bug in Tensorboard
 ENV LD_PRELOAD /usr/lib/libtcmalloc_minimal.so.4
@@ -90,8 +100,8 @@ RUN pip3 --no-cache-dir install \
     theano \
     https://github.com/Lasagne/Lasagne/archive/master.zip \
     sklearn \
-    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.4.0rc1-cp35-cp35m-linux_x86_64.whl \
-    http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp35-cp35m-manylinux1_x86_64.whl \
+    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.4.0rc1-cp36-cp36m-linux_x86_64.whl \
+    http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp36-cp36m-manylinux1_x86_64.whl \
     torchvision \
  && python3 -m ipykernel.kernelspec
 
