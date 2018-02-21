@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn6-devel
+FROM nvidia/cuda:9.0-cudnn7-devel
 
 MAINTAINER bethgelab (it@bethgelab.org)
 
@@ -68,6 +68,16 @@ RUN chmod a+x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
+# install python 3.6
+RUN add-apt-repository ppa:jonathonf/python-3.6 && \
+  apt-get update && \
+  apt-get install -y python3.6 python3.6-dev && \
+  rm /usr/bin/python3 && \
+  ln /usr/bin/python3.6 /usr/bin/python3 && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
 # We have to use `pip` (instead of `pip2`) to upgrade pip, since these two are
 # different and only `pip` works. After the upgrade, we can start using `pip2`.
 RUN pip install pip --upgrade \
@@ -90,8 +100,13 @@ RUN pip3 --no-cache-dir install \
     theano \
     https://github.com/Lasagne/Lasagne/archive/master.zip \
     sklearn \
-    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.4.0rc1-cp35-cp35m-linux_x86_64.whl \
-    http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp35-cp35m-manylinux1_x86_64.whl \
+    pandas \
+    seaborn \
+    click \
+    mypy \
+    boltons \
+    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.5.0-cp36-cp36m-linux_x86_64.whl \
+    http://download.pytorch.org/whl/cu90/torch-0.3.1-cp36-cp36m-linux_x86_64.whl \
     torchvision \
  && python3 -m ipykernel.kernelspec
 
