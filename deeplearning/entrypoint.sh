@@ -46,6 +46,14 @@ if [ -n "$USER" ]; then
       fi
    fi
 
+   # set shell
+   if [ -z "$USER_SHELL" ]
+   then
+       usermod -s "/bin/bash" $USER
+   else
+       usermod -s $USER_SHELL $USER
+   fi
+   
   if [ -n $CWD ]; then cd $CWD; fi
   echo "Running as user $USER"
   exec gosu $USER "$@"

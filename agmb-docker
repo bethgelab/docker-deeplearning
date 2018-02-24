@@ -103,6 +103,10 @@ parser.add_argument('--userhome', metavar='USER_HOME', type=str,
                     default='/gpfs01/bethge/home/' + os.environ['USER'],
 					help='Specify an alternative home directory (default: /gpfs01/bethge/home/$USER_NAME)')
 
+parser.add_argument('--shell', metavar='USER_SHELL', type=str,
+                    default=os.environ['SHELL'],
+					help='Specify an alternate default shell (default: $SHELL)')
+
 parser.add_argument('--pw', metavar='SUDO_PASSWORD', type=str,
                     default='pw',
 					help='Specify a password for sudo rights (default: pw)')
@@ -149,9 +153,10 @@ command += [
 		   '-e', 'USER_GROUPS=' + args.usergroups,     # set user-group
 		   '-e', 'USER=' + args.user,                  # set user-name
 		   '-e', 'OWNER=' + args.user,                 # set owner-name (used by dockerps)
+		   '-e', 'USER_SHELL=' + args.shell,           # set user-shell
 		   '-e', 'USER_ID=' + str(args.uid),           # set user-ID
 		   '-e', 'USER_HOME=' + args.userhome,         # set home directory
-		   '-e', 'USER_ENCRYPTED_PASSWORD=' + args.pw, # set home directory
+		   '-e', 'USER_ENCRYPTED_PASSWORD=' + args.pw, # set password
 		   '-e', 'GPU=' + GPU,                         # set GPU
 		   '-e', 'JUPYTERPASS=' + args.jupyterpass,    # set jupyter password
 		   '-v', '/gpfs01/bethge:/gpfs01/bethge',      # mount bethge directory
