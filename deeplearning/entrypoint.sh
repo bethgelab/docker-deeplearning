@@ -56,6 +56,20 @@ if [ -n "$USER" ]; then
    
   if [ -n $CWD ]; then cd $CWD; fi
   echo "Running as user $USER"
+
+  # set environment such that gpus can be used even in ssh connections
+  echo "export CUDNN_VERSION=$CUDNN_VERSION" >> /etc/profile
+  echo "export NVIDIA_REQUIRE_CUDA=$NVIDIA_REQUIRE_CUDA" >> /etc/profile
+  echo "export LIBRARY_PATH=$LIBRARY_PATH" >> /etc/profile
+  echo "export LD_PRELOAD=$LD_PRELOAD" >> /etc/profile
+  echo "export NVIDIA_VISIBLE_DEVICES=$NVIDIA_VISIBLE_DEVICES" >> /etc/profile
+  echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> /etc/profile
+  echo "export JUPYTERPASS=$JUPYTERPASS" >> /etc/profile
+  echo "export NVIDIA_DRIVER_CAPABILITIES=$NVIDIA_DRIVER_CAPABILITIES" >> /etc/profile
+  echo "export PATH=$PATH" >> /etc/profile
+  echo "export CUDA_PKG_VERSION=$CUDA_PKG_VERSION" >> /etc/profile
+  echo "export JUPYTER_CONFIG_DIR=$JUPYTER_CONFIG_DIR" >> /etc/profile
+
   exec gosu $USER "$@"
 else
   if [ -n $CWD ]; then cd $CWD; fi
