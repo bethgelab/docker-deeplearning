@@ -58,9 +58,13 @@ def check_other_containers(gpu):
         if "bethgelab/gpu_minion" in containerName:  # ignore minions
             continue
 
-        usedGpu = check_output(['docker', 'exec', containerId, 'sh', '-c', "echo $GPU"]).strip()
-        if usedGpu == gpu:
-            print(">>> WARNING the following container use the requested GPU:")
+        try:
+            usedGpu = check_output(['docker', 'exec', containerId, 'sh', '-c', "echo $GPU"]).strip()
+            if usedGpu == gpu:
+                print(">>> WARNING the following container use the requested GPU:")
+                print("CONTAINER ID: {}, CONTAINER NAME: {}".format(containerId, containerName))
+        except:
+            print(">>> WARNING cannot probe container it is unclear if it uses a GPU:")
             print("CONTAINER ID: {}, CONTAINER NAME: {}".format(containerId, containerName))
 
 
