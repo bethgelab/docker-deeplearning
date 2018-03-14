@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.0-cudnn7-devel
+FROM nvidia/cuda:9.1-cudnn7-devel
 
 MAINTAINER bethgelab (it@bethgelab.org)
 
@@ -103,22 +103,29 @@ RUN pip3 --no-cache-dir install \
     https://github.com/Lasagne/Lasagne/archive/master.zip \
     sklearn \
     pandas \
+    tables \
     seaborn \
+    h5py \
     click \
     mypy \
     boltons \
-    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.5.0-cp36-cp36m-linux_x86_64.whl \
-    http://download.pytorch.org/whl/cu90/torch-0.3.1-cp36-cp36m-linux_x86_64.whl \
+    http://download.pytorch.org/whl/cu91/torch-0.3.1-cp36-cp36m-linux_x86_64.whl \
     torchvision \
  && python3 -m ipykernel.kernelspec
 
+# install tensorflow from source
+COPY install_bazel.sh /tmp
+RUN bash /tmp/install_bazel.sh
+COPY install_tensorflow.sh /tmp
+RUN bash /tmp/install_tensorflow.sh
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
 # enable jupyter extensions
 RUN pip install jupyter_contrib_nbextensions \
  && jupyter contrib nbextension install --system \
- && jupyter nbextension enable codefolding/main \
- && jupyter nbextension enable hinterland/hinterland \
- && jupyter nbextension enable varInspector/main \
- && jupyter nbextension enable comment-uncomment/main
+ && jupyter nbextension enable codefolding/main
+# && jupyter nbextension enable hinterland/hinterland \
+# && jupyter nbextension enable varInspector/main \
+# && jupyter nbextension enable comment-uncomment/main
 
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
