@@ -1,7 +1,7 @@
 apt-get install -y python3-numpy python3-dev python3-pip python3-wheel cuda-command-line-tools-9-1 libcupti-dev
 apt-get clean
 
-ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1
 
 # clone tensorflow
 cd /tmp/
@@ -34,7 +34,7 @@ export CC_OPT_FLAGS="-march=native"
 export TF_SET_ANDROID_WORKSPACE=0
 export TF_CUDA_COMPUTE_CAPABILITIES=7.0,6.1,3.7,3.5
 export GCC_HOST_COMPILER_PATH=/usr/bin/gcc
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
 export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so.4
 ./configure
 
@@ -48,3 +48,4 @@ pip3 --no-cache-dir install tensorflow-1.6.0-cp36-cp36m-linux_x86_64.whl
 # clean up
 cd /
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+rm /usr/local/cuda/lib64/libcuda.so.1

@@ -118,7 +118,7 @@ COPY install_bazel.sh /tmp
 RUN bash /tmp/install_bazel.sh
 COPY install_tensorflow.sh /tmp
 RUN bash /tmp/install_tensorflow.sh
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
+
 # enable jupyter extensions
 RUN pip install jupyter_contrib_nbextensions \
  && jupyter contrib nbextension install --system \
