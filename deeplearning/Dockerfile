@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.1-cudnn7-devel
+FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu18.04
 
 MAINTAINER bethgelab (it@bethgelab.org)
 
@@ -29,7 +29,7 @@ RUN apt-get update -qq \
     curl \
     libcurl3-dev \
     libfreetype6-dev \
-    libpng12-dev \
+    libpng-dev \
     libzmq3-dev \
     pkg-config \
     python-dev \
@@ -39,6 +39,9 @@ RUN apt-get update -qq \
     zip \
     python-pip \
     python3-pip \
+    python3-venv \
+    python-setuptools \
+    python3-setuptools \
     zlib1g-dev \
     libjs-mathjax \ 
 	libgoogle-perftools-dev \
@@ -46,7 +49,7 @@ RUN apt-get update -qq \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # fix invalid pointer bug in Tensorboard
-ENV LD_PRELOAD /usr/lib/libtcmalloc_minimal.so.4
+# ENV LD_PRELOAD /usr/lib/libtcmalloc_minimal.so.4
 
 # Enable passwordless sudo for all users
 RUN echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -68,30 +71,28 @@ RUN chmod a+x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# install python 3.6
-RUN add-apt-repository ppa:jonathonf/python-3.6 \
- && apt-get update \
- && apt-get install -y python3.6 python3.6-dev \
- && rm /usr/bin/python3 \
- && ln /usr/bin/python3.6 /usr/bin/python3 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN cd /usr/lib/python3/dist-packages \
- && ln -s apt_pkg.cpython-35m-x86_64-linux-gnu.so apt_pkg.cpython-36m-x86_64-linux-gnu.so \
- && ln -s apt_inst.cpython-35m-x86_64-linux-gnu.so apt_inst.cpython-36m-x86_64-linux-gnu.so
 
-# We have to use `pip` (instead of `pip2`) to upgrade pip, since these two are
-# different and only `pip` works. After the upgrade, we can start using `pip2`.
-RUN pip install pip --upgrade \
- && pip3 install pip --upgrade \
- && pip2 install setuptools \
- && pip3 install setuptools
+# install conda
+ENV CONDA_DIR /opt/conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+ENV MINICONDA_VERSION latest
+RUN echo ${MINICONDA_VERSION}
+RUN cd /tmp && \
+  wget --quiet https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
+  /bin/bash Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+  rm Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh
+RUN $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
+  $CONDA_DIR/bin/conda config --system --set auto_update_conda false && \
+  $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
+  $CONDA_DIR/bin/conda install --quiet --yes python=3.6 conda=`$CONDA_DIR/bin/conda --version | awk '{print $2}'` && \
+  $CONDA_DIR/bin/conda update --all --quiet --yes && \
+  conda clean -tipsy
 
 RUN mkdir /usr/.jupyter
 ENV JUPYTER_CONFIG_DIR /usr/.jupyter
 COPY jupyter_notebook_config.py /usr/.jupyter/
 
-RUN pip3 --no-cache-dir install \
+RUN pip install \
     tqdm \
     ipykernel \
     jupyter \
@@ -99,17 +100,20 @@ RUN pip3 --no-cache-dir install \
     matplotlib \
     numpy \
     scipy \
+    keras-applications \
+    keras-preprocessing \
+    h5py \
+    setuptools \
     theano \
     https://github.com/Lasagne/Lasagne/archive/master.zip \
-    sklearn \
+    scikit-learn \
     pandas \
     tables \
     seaborn \
-    h5py \
     click \
     mypy \
     boltons \
-    http://download.pytorch.org/whl/cu91/torch-0.3.1-cp36-cp36m-linux_x86_64.whl \
+    http://download.pytorch.org/whl/cu92/torch-0.4.1-cp36-cp36m-linux_x86_64.whl \
     torchvision \
  && python3 -m ipykernel.kernelspec
 
@@ -118,6 +122,9 @@ COPY install_bazel.sh /tmp
 RUN bash /tmp/install_bazel.sh
 COPY install_tensorflow.sh /tmp
 RUN bash /tmp/install_tensorflow.sh
+
+# addinga sym link such that pip3 is also linked to the conda env
+RUN ln -s $CONDA_DIR/bin/pip $CONDA_DIR/bin/pip3
 
 # enable jupyter extensions
 RUN pip install jupyter_contrib_nbextensions \

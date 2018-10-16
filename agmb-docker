@@ -135,7 +135,12 @@ parser.add_argument('--name', metavar='CONTAINER_NAME', type=str,
 
 
 # container name
-gpu_name = GPU.translate(None, ',') if GPU != "cpu" else 'CPU'
+#gpu_name = GPU.translate(None, ',') if GPU != "cpu" else 'CPU'
+if GPU != "cpu":
+    gpu_name = GPU
+else:
+    gpu_name = 'CPU'
+
 container_name = os.environ['USER'] + gpu_name
 if args.name != "":
     container_name = container_name + "-" + args.name
