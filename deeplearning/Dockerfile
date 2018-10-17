@@ -42,6 +42,7 @@ RUN apt-get update -qq \
     python3-venv \
     python-setuptools \
     python3-setuptools \
+    cuda-command-line-tools-9-2 \
     zlib1g-dev \
     libjs-mathjax \ 
 	libgoogle-perftools-dev \
@@ -87,12 +88,14 @@ RUN $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
   $CONDA_DIR/bin/conda install --quiet --yes python=3.6 conda=`$CONDA_DIR/bin/conda --version | awk '{print $2}'` && \
   $CONDA_DIR/bin/conda update --all --quiet --yes && \
   conda clean -tipsy
+# addinga sym link such that pip3 is also linked to the conda env
+RUN ln -s $CONDA_DIR/bin/pip $CONDA_DIR/bin/pip3
 
 RUN mkdir /usr/.jupyter
 ENV JUPYTER_CONFIG_DIR /usr/.jupyter
 COPY jupyter_notebook_config.py /usr/.jupyter/
 
-RUN pip install \
+RUN pip --no-cache-dir install \
     tqdm \
     ipykernel \
     jupyter \
@@ -123,11 +126,8 @@ RUN bash /tmp/install_bazel.sh
 COPY install_tensorflow.sh /tmp
 RUN bash /tmp/install_tensorflow.sh
 
-# addinga sym link such that pip3 is also linked to the conda env
-RUN ln -s $CONDA_DIR/bin/pip $CONDA_DIR/bin/pip3
-
 # enable jupyter extensions
-RUN pip install jupyter_contrib_nbextensions \
+RUN pip --no-cache-dir install jupyter_contrib_nbextensions \
  && jupyter contrib nbextension install --system \
  && jupyter nbextension enable codefolding/main
 # && jupyter nbextension enable hinterland/hinterland \

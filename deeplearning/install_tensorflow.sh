@@ -1,6 +1,3 @@
-apt-get install -y python3-numpy python3-dev python3-pip python3-wheel cuda-command-line-tools-9-2 libcupti-dev
-apt-get clean
-
 ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1
 
 # clone tensorflow
@@ -10,10 +7,6 @@ cd /tmp/tensorflow
 git checkout v1.11.0
 
 # configurate build
-# export PYTHON_BIN_PATH=/usr/bin/python3.6
-# export PYTHON_LIB_PATH=/usr/local/lib/python3.6/dist-packages
-
-
 export PYTHON_BIN_PATH=/opt/conda/bin/python
 export PYTHON_LIB_PATH=/opt/conda/lib/python3.6/site-packages
 export CUDA_TOOLKIT_PATH=/usr/local/cuda
@@ -55,6 +48,7 @@ bazel-bin/tensorflow/tools/pip_package/build_pip_package ./
 pip --no-cache-dir install tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl
 
 # clean up
+bazel clean
 cd /
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 rm /usr/local/cuda/lib64/libcuda.so.1
