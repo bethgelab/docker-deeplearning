@@ -21,16 +21,21 @@ A short recipe how to setup a machine up from scratch to get the container runni
    
    1. Remove potential previously installed packages
       `sudo apt remove nvidia-*`
-   2. Add ppa
+   2. Remove potential setup ppa
+      ```
+      sudo rm /etc/apt/sources.list.d/cuda*
+      sudo apt remove nvidia-cuda-toolkit
+      sudo apt update
+      ```
+   3. Add ppa
       ```
       sudo apt-key adv --fetch-keys  http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
       sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
       sudo apt update
       ````
-   3. Install cuda and nvidia drivers
+   4. Install cuda and nvidia drivers
       `sudo apt install cuda-10-0`
-
-   4. Check installation
+   5. Check installation
       `nvidia-smi`
 
 3. Install docker
