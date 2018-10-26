@@ -9,7 +9,7 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
 `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/future`
 
 # Workstation setup
-A short receip how to setup a machine up from scratch to get the container running.
+A short recipe how to setup a machine up from scratch to get the container running.
 
 1. Install Ubuntu 18.04.1 LTS
 
