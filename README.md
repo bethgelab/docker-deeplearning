@@ -6,7 +6,7 @@ In order to use it with GPUs, the host machine needs nvidia-docker2 (https://git
 
 The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). For example the container can be started as follows:
 
-`docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/future`
+`docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e NVIDIA_VISIBLE_DEVICES=0 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/future`
 
 # Workstation setup
 A short recipe how to setup a machine up from scratch to get the container running.
@@ -93,4 +93,4 @@ A short recipe how to setup a machine up from scratch to get the container runni
       `docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi`
 
 5. Run our docker container
-   `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e NVIDIA_VISIBLE_DEVICES=0 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future`
+   `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future`
