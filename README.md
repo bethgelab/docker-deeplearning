@@ -68,10 +68,29 @@ A short recipe how to setup a machine up from scratch to get the container runni
 
 4. Install nvidia-docker2
 
-   https://github.com/nvidia/nvidia-docker/wiki/CUDA#requirements
-
-   Checks:
-   `docker run -ti --rm --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=0 nvidia/cuda`
+   Based on https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)
+   
+   1. Removing potentially installed old verions:
+      ```
+      docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
+      sudo apt-get purge nvidia-docker
+      ```
+   2. Add the nvidia repository
+      ```
+      curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+      sudo apt-key add -
+      distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+      curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+      sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+      sudo apt-get update
+      ```
+   3. Install nvidia-docker2
+      ```
+      sudo yum install nvidia-docker2
+      sudo pkill -SIGHUP dockerd
+      ```
+   4. Check installation
+      `docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi`
 
 5. Run our docker container
-   `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future`
+   `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e NVIDIA_VISIBLE_DEVICES=0 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future`
