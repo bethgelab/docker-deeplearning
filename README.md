@@ -115,19 +115,20 @@ A short recipe how to setup a machine up from scratch to get the container runni
    bethgelab/deeplearning:future
    ```
    
-   # Bethgelab 
-   In order to mount our group filesystem (gpfs) provided by our institute and make it availbale under your home directory use the following command (works in our lab where `/gpfs01` is available on the host):
-   ```
-   docker run --rm \
-   --runtime=nvidia \
-   -e NB_UID=$UID \
-   -e NB_GID=`id -g` \
-   -e NB_USER=$USER \
-   -e NVIDIA_VISIBLE_DEVICES=0 \
-   -e JUPYTER_LAB_ENABLE=yes \
-   -p 10000:8888 \
-   -w ${HOME} \
-   -v ${HOME}:${HOME} \
-   -v /gpfs01/:/gpfs01 \
-   bethgelab/deeplearning:future
-   ```
+# Bethgelab 
+In order to mount our group filesystem (gpfs) and make your home directory available use the following command:
+```
+docker run --rm \
+--runtime=nvidia \
+-e NB_UID=$UID \
+-e NB_GID=`id -g` \
+-e NB_USER=$USER \
+-e NVIDIA_VISIBLE_DEVICES=0 \
+-e JUPYTER_LAB_ENABLE=yes \
+-p 10000:8888 \
+-w ${HOME} \
+-v ${HOME}:${HOME} \
+-v /gpfs01/:/gpfs01 \
+bethgelab/deeplearning:future
+```
+*works in our lab where `/gpfs01` is available on the host.*
