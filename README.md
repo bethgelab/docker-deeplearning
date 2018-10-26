@@ -125,7 +125,8 @@ A short recipe how to setup a machine up from scratch to get the container runni
    -e NB_USER=$USER \
    -e NVIDIA_VISIBLE_DEVICES=0 \
    -e JUPYTER_LAB_ENABLE=yes \
-   -p 10000:8888 -w ${HOME} \
+   -p 10000:8888 \
+   -w ${HOME} \
    -v ${HOME}:${HOME} \
    -v /gpfs01/:/gpfs01 \
    bethgelab/deeplearning:future
