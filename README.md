@@ -54,8 +54,8 @@ A short recipe how to setup a machine up from scratch to get the container runni
       ```
    3. Add key
       `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -`
-
-   4.  Add repository
+      Verify that you now have the key with the fingerprint `9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88`.
+   4. Add repository
       ```
       sudo add-apt-repository \
       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
