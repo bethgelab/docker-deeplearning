@@ -93,4 +93,12 @@ A short recipe how to setup a machine up from scratch to get the container runni
       `docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi`
 
 5. Run our docker container
-   `docker run --rm --runtime=nvidia -e NB_UID=$UID -e NB_USER=$USER -p 10000:8888 -e JUPYTER_LAB_ENABLE=yes -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future`
+   ```
+   docker run --rm \
+   --runtime=nvidia \
+   -e NB_UID=$UID \
+   -e NB_USER=$USER \
+   -e JUPYTER_LAB_ENABLE=yes \
+   -p 10000:8888 \
+   -v "${HOME}":/home/${USER}/work bethgelab/deeplearning:future
+   ```
