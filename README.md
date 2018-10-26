@@ -15,7 +15,6 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
    -e NVIDIA_VISIBLE_DEVICES=0 \
    -e JUPYTER_LAB_ENABLE=yes \
    -p 10000:8888 \
-   -v "${HOME}":/home/${USER}/work \
    bethgelab/deeplearning:future
    ```
 
