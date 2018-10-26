@@ -131,4 +131,4 @@ docker run --rm \
 -v /gpfs01/:/gpfs01 \
 bethgelab/deeplearning:future
 ```
-*works in our lab where `/gpfs01` is available on the host.*
+**NOTE: The above command works only in our lab where `/gpfs01` is available on the host machine.**
