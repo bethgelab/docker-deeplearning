@@ -96,7 +96,7 @@ A short recipe how to setup a machine up from scratch to get the container runni
       ```
    3. Install nvidia-docker2
       ```
-      sudo yum install nvidia-docker2
+      sudo apt install nvidia-docker2
       sudo pkill -SIGHUP dockerd
       ```
    4. Check installation
