@@ -127,6 +127,7 @@ docker run --rm \
 -e NVIDIA_VISIBLE_DEVICES=0 \
 -e JUPYTER_LAB_ENABLE=yes \
 -p 10000:8888 \
+-p 22222:22 \
 -w ${HOME} \
 -v /gpfs01/:/gpfs01 \
 bethgelab/deeplearning:future
