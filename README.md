@@ -45,7 +45,8 @@ A short recipe how to setup a machine up from scratch to get the container runni
       ````
    4. Install cuda and nvidia drivers
       `sudo apt install cuda-10-0`
-   5. Check installation
+   5. Reboot
+   6. Check installation
       `nvidia-smi`
 
 3. Install docker
