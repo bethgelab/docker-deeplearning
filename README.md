@@ -7,7 +7,7 @@ In order to use it with GPUs, the host machine needs nvidia-docker2 (https://git
 The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). For example the container can be started as follows:
 
    ```
-   docker run --rm \
+   docker run --rm -d \
    --runtime=nvidia \
    -e NB_UID=$UID \
    -e NB_GID=`id -g` \
@@ -105,7 +105,7 @@ A short recipe how to setup a machine up from scratch to get the container runni
 
 5. Run our docker container
    ```
-   docker run --rm \
+   docker run --rm -d \
    --runtime=nvidia \
    -e NB_UID=$UID \
    -e NB_GID=`id -g` \
