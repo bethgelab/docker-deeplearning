@@ -8,7 +8,7 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
 
 ## start jupyter notebooks
 
-Notebooks can be started as follows:
+   Notebooks can be started as follows:
    ```
    docker run --rm -d \
    --runtime=nvidia \
@@ -22,8 +22,9 @@ Notebooks can be started as follows:
    ```
 ## run batch scripts
 
-The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows:
-```docker run -d --rm \
+   The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows:
+   ```
+   docker run -d --rm \
    --runtime=nvidia \
    -e NB_UID=$UID \
    -e NB_GID=`id -g` \
@@ -33,7 +34,7 @@ The same setup can be used to run batch scripts (or any other command) using `st
    -v /gpfs01/:/gpfs01 \
    bethgelab/deeplearning:future start.sh python3 /gpfs01/bethge/home/aboettcher/scripts/batch.py
    ```
-For more details about the `start.sh` script see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh.
+   For more details about the `start.sh` script see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh.
 
 # Workstation setup
 A short recipe how to setup a machine up from scratch to get the container running.
