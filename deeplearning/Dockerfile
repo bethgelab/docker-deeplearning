@@ -46,6 +46,7 @@ RUN apt-get update -qq \
     apt-utils \
     emacs \
     zsh \
+    ispell \
     unzip \
     htop \
     less \
@@ -92,5 +93,18 @@ COPY hook.sh /usr/local/bin/before-notebook.d/
 RUN echo "export PATH="$PATH >> /etc/profile.d/env.sh
 RUN echo "export LIBRARY_PATH="$LIBRARY_PATH >> /etc/profile.d/env.sh
 RUN echo "export LD_LIBRARY_PATH="$LD_LIBRARY_PATH >> /etc/profile.d/env.sh
+
+### add tmux config
+COPY tmux.conf /etc/
+
+### emacs setup
+RUN sudo mkdir /usr/share/emacs/site-lisp/elpa
+COPY installEmacsPackages.el /usr/share/emacs/site-lisp/
+RUN emacs --script /usr/share/emacs/site-lisp/installEmacsPackages.el
+COPY default.el /usr/share/emacs/site-lisp/
+RUN pip install --no-cache-dir flake8 wheel \
+ && pip install --no-cache-dir --upgrade /usr/share/emacs/site-lisp/elpa/jedi-core-*/ \
+ && fix-permissions $CONDA_DIR \
+ && fix-permissions /home/$NB_USER
 
 USER $UID
