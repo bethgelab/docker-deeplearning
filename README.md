@@ -137,7 +137,7 @@ A short recipe how to setup a machine from scratch to get the container running.
 # Bethgelab 
 In order to mount our group filesystem (gpfs) and make your home directory available use the following command:
 ```
-docker run --rm \
+docker run --rm -d \
 --runtime=nvidia \
 -e NB_UID=$UID \
 -e NB_GID=`id -g` \
