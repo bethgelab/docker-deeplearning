@@ -61,7 +61,6 @@ RUN conda install \
     mypy \
     pytest \
     tqdm \
-    scikit-image \
     xarray \
  && conda clean -tipsy \
  && fix-permissions $CONDA_DIR \
