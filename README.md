@@ -17,7 +17,7 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
    -p 10000:8888 \
    bethgelab/deeplearning:future
    ```
-The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows (see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh for more details):
+The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows:
 ```docker run -d --rm \
    --runtime=nvidia \
    -e NB_UID=$UID \
@@ -28,6 +28,7 @@ The same setup can be used to run batch scripts (or any other command) using `st
    -v /gpfs01/:/gpfs01 \
    bethgelab/deeplearning:future start.sh python3 /gpfs01/bethge/home/aboettcher/scripts/batch.py
    ```
+For more details about the `start.sh` script see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh.
 
 # Workstation setup
 A short recipe how to setup a machine up from scratch to get the container running.
