@@ -75,7 +75,6 @@ RUN pip install --no-cache-dir --upgrade pip \
     numpy==1.15.3 \
     sphinxcontrib-napoleon \
     sphinx_rtd_theme \
-    sphinx_gallery \
  && fix-permissions $CONDA_DIR \
  && fix-permissions /home/$NB_USER
 
