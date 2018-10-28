@@ -4,8 +4,11 @@ This is a new image that is based on jupyter/tensorflow-notebook (https://hub.do
 
 In order to use it with GPUs, the host machine needs nvidia-docker2 (https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)).
 
-The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). For example the container can be started as follows:
+The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). 
 
+## start jupyter notebooks
+
+Notebooks can be started as follows:
    ```
    docker run --rm -d \
    --runtime=nvidia \
@@ -17,6 +20,8 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
    -p 10000:8888 \
    bethgelab/deeplearning:future
    ```
+## run batch scripts
+
 The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows:
 ```docker run -d --rm \
    --runtime=nvidia \
