@@ -37,7 +37,7 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
    For more details about the `start.sh` script see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh.
 
 # Workstation setup
-A short recipe how to setup a machine up from scratch to get the container running.
+A short recipe how to setup a machine from scratch to get the container running.
 
 1. Install Ubuntu 18.04.1 LTS
 
