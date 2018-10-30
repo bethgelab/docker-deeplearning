@@ -36,6 +36,17 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=10.0 brand=tesla,driver>=384,driver<385"
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 
+### install tensorflow from source
+COPY install_bazel.sh /tmp
+RUN bash /tmp/install_bazel.sh \
+ && fix-permissions $CONDA_DIR \
+ && fix-permissions /home/$NB_USER
+
+COPY install_tensorflow.sh /tmp
+RUN bash /tmp/install_tensorflow.sh \
+ && fix-permissions $CONDA_DIR \
+ && fix-permissions /home/$NB_USER
+
 ### install ubuntu packages
 RUN apt-get update -qq \
  && DEBIAN_FRONTEND=noninteractive apt-get install \
@@ -61,7 +72,6 @@ RUN conda install \
     mypy \
     pytest \
     tqdm \
-    scikit-image \
     xarray \
  && conda clean -tipsy \
  && fix-permissions $CONDA_DIR \
@@ -71,9 +81,7 @@ RUN conda install \
 RUN pip install --no-cache-dir --upgrade pip \
  && pip --no-cache-dir install \
     keras \ 
-    https://github.com/evdcush/TensorFlow-wheels/releases/download/tf-1.11.0-gpu-10.0_7.3_5.0-mkl/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl \
     sphinx \
-    numpy==1.15.3 \
     sphinxcontrib-napoleon \
     sphinx_rtd_theme \
     sphinx_gallery \
