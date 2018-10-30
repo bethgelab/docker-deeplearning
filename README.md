@@ -4,10 +4,13 @@ This is a new image that is based on jupyter/tensorflow-notebook (https://hub.do
 
 In order to use it with GPUs, the host machine needs nvidia-docker2 (https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)).
 
-The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). For example the container can be started as follows:
+The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html). 
 
+## start jupyter notebooks
+
+   Notebooks can be started as follows:
    ```
-   docker run --rm \
+   docker run --rm -d \
    --runtime=nvidia \
    -e NB_UID=$UID \
    -e NB_GID=`id -g` \
@@ -17,9 +20,24 @@ The container has many options (https://jupyter-docker-stacks.readthedocs.io/en/
    -p 10000:8888 \
    bethgelab/deeplearning:future
    ```
+## run batch scripts
+
+   The same setup can be used to run batch scripts (or any other command) using `start.sh` as follows:
+   ```
+   docker run -d --rm \
+   --runtime=nvidia \
+   -e NB_UID=$UID \
+   -e NB_GID=`id -g` \
+   -e NB_USER=$USER \
+   -e NVIDIA_VISIBLE_DEVICES=0 \
+   -w ${HOME} \
+   -v /gpfs01/:/gpfs01 \
+   bethgelab/deeplearning:future start.sh python3 /gpfs01/bethge/home/aboettcher/scripts/batch.py
+   ```
+   For more details about the `start.sh` script see https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#start-sh.
 
 # Workstation setup
-A short recipe how to setup a machine up from scratch to get the container running.
+A short recipe how to setup a machine from scratch to get the container running.
 
 1. Install Ubuntu 18.04.1 LTS
 
@@ -105,7 +123,7 @@ A short recipe how to setup a machine up from scratch to get the container runni
 
 5. Run our docker container
    ```
-   docker run --rm \
+   docker run --rm -d \
    --runtime=nvidia \
    -e NB_UID=$UID \
    -e NB_GID=`id -g` \
@@ -119,7 +137,7 @@ A short recipe how to setup a machine up from scratch to get the container runni
 # Bethgelab 
 In order to mount our group filesystem (gpfs) and make your home directory available use the following command:
 ```
-docker run --rm \
+docker run --rm -d \
 --runtime=nvidia \
 -e NB_UID=$UID \
 -e NB_GID=`id -g` \
