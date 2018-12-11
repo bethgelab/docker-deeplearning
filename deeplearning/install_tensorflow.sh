@@ -6,7 +6,7 @@ ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1
 cd /tmp/
 git clone https://github.com/tensorflow/tensorflow.git
 cd /tmp/tensorflow
-git checkout v1.11.0
+git checkout v1.12.0
 
 # configurate build
 export PYTHON_BIN_PATH=/opt/conda/bin/python
@@ -42,11 +42,13 @@ export NCCL_INSTALL_PATH=${CUDA_TOOLKIT_PATH}/targets/x86_64-linux
 ./configure
 
 # build
+
+#echo import %workspace%/tools/bazel.rc >> .bazelrc
 bazel build --jobs 24 --action_env="LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" --config=opt --config=mkl //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package ./
 
 # install
-pip --no-cache-dir install tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl
+pip --no-cache-dir install tensorflow-1.12.0-cp36-cp36m-linux_x86_64.whl
 
 # clean up
 bazel clean

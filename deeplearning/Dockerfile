@@ -87,13 +87,7 @@ RUN pip install --no-cache-dir --upgrade pip \
  && fix-permissions $CONDA_DIR \
  && fix-permissions /home/$NB_USER
 
-### start sshd
-EXPOSE 22
-RUN mkdir /var/run/sshd
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+### execute hooks
 COPY hook.sh /usr/local/bin/before-notebook.d/
 
 ### setup environment variables system wide
