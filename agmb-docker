@@ -139,6 +139,8 @@ gpu_name = GPU.translate(None, ',') if GPU != "cpu" else 'CPU'
 container_name = os.environ['USER'] + gpu_name
 if args.name != "":
     container_name = container_name + "-" + args.name
+if os.environ.get('CONTAINER_POSTFIX'):
+    container_name = container_name + "-" + os.environ['CONTAINER_POSTFIX']
 
 # encrypt passwords
 args.pw = crypt.crypt(args.pw, 'aa')
