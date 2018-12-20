@@ -62,6 +62,7 @@ RUN apt-get update -qq \
     htop \
     less \
     zip \
+    vim \
     libjs-mathjax \ 
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -84,6 +85,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     sphinx \
     sphinxcontrib-napoleon \
     sphinx_rtd_theme \
+    fastparquet \
  && fix-permissions $CONDA_DIR \
  && fix-permissions /home/$NB_USER
 
