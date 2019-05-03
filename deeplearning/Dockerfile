@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.0-cudnn7-devel
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 
 MAINTAINER bethgelab (it@bethgelab.org)
 
@@ -27,6 +27,7 @@ RUN apt-get update -qq \
     zsh \
     build-essential \
     curl \
+    python-software-properties \
     libcurl3-dev \
     libfreetype6-dev \
     libpng12-dev \
@@ -41,7 +42,7 @@ RUN apt-get update -qq \
     python3-pip \
     zlib1g-dev \
     libjs-mathjax \ 
-	libgoogle-perftools-dev \
+    libgoogle-perftools-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -83,9 +84,9 @@ RUN cd /usr/lib/python3/dist-packages \
 # We have to use `pip` (instead of `pip2`) to upgrade pip, since these two are
 # different and only `pip` works. After the upgrade, we can start using `pip2`.
 RUN pip install pip --upgrade \
- && pip3 install pip --upgrade \
- && pip2 install setuptools \
- && pip3 install setuptools
+ && pip3 install pip --upgrade
+RUN pip2 install setuptools
+RUN pip3 install setuptools
 
 RUN mkdir /usr/.jupyter
 ENV JUPYTER_CONFIG_DIR /usr/.jupyter
@@ -107,9 +108,14 @@ RUN pip3 --no-cache-dir install \
     click \
     mypy \
     boltons \
-    https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.5.0-cp36-cp36m-linux_x86_64.whl \
-    http://download.pytorch.org/whl/cu90/torch-0.3.1-cp36-cp36m-linux_x86_64.whl \
+    tensorflow-gpu \
+    torch \
     torchvision \
+    jupyterlab-git \
+    jupyter-tensorboard \
+    flake8 \
+    jupyter_contrib_nbextensions \
+    nodejs \
  && python3 -m ipykernel.kernelspec
 
 # enable jupyter extensions
@@ -120,6 +126,14 @@ RUN pip install jupyter_contrib_nbextensions \
  && jupyter nbextension enable varInspector/main \
  && jupyter nbextension enable comment-uncomment/main
 
+# install tensorboard and git extensions for jupyterlab
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - \
+ && apt-get install -y nodejs
+RUN jupyter labextension install jupyterlab_tensorboard \
+ && jupyter labextension install @jupyterlab/git \
+ && jupyter serverextension enable --py jupyterlab_git
+# && jupyter labextension install jupyterlab-flake8 \  # currently more annoying than helpful
+
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
@@ -128,6 +142,8 @@ COPY run_jupyterlab.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/run_jupyter.sh \
  && chmod -R a+rwx /usr/.jupyter \
  && chmod +x /usr/local/bin/run_jupyterlab.sh
+
+RUN rm -rf /tmp/*
 
 USER $NB_USER
 
