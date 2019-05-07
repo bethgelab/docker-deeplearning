@@ -17,6 +17,7 @@ except KeyError:
     GPU = ''
 if GPU == '':
     GPU = 'cpu'
+    os.environ['NV_GPU'] = ','  # empty NV_GPU leads to all GPUs being mounted into the container
 
 # find IP address of network interface
 def get_ip_address(ifname):
